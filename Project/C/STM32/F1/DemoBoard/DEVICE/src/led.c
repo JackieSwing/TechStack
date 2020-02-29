@@ -1,24 +1,24 @@
 #include "led.h"
 
-int Led_Init(void) {
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOE, ENABLE);
+void Led_Init(void) {
+    RCC_APB2PeriphClockCmd(DEV_LED2_CLOCK, ENABLE);
     GPIO_InitTypeDef GPIO_InitStructure;
 
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
+    GPIO_InitStructure.GPIO_Pin = DEV_LED2_PIN;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    GPIO_Init(GPIOE, &GPIO_InitStructure);
-    return 0;
+    GPIO_Init(DEV_LED2_PORT, &GPIO_InitStructure);
+    return;
 }
 
 
-int Led_On(void) {
-    GPIO_WriteBit(GPIOE, GPIO_Pin_5, Bit_RESET);
-    return 0;
+void Led_On(void) {
+    GPIO_WriteBit(DEV_LED2_PORT, DEV_LED2_PIN, Bit_RESET);
+    return;
 }
 
 
-int Led_Off(void) {
-    GPIO_WriteBit(GPIOE, GPIO_Pin_5, Bit_SET);
-    return 0;
+void Led_Off(void) {
+    GPIO_WriteBit(DEV_LED2_PORT, DEV_LED2_PIN, Bit_SET);
+    return;
 }

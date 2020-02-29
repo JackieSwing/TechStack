@@ -2,12 +2,14 @@
 #define _LED_H_
 
 #include "stm32f10x.h"
+#include "dev_common.h"
+#include "dev_err.h"
 
 
-int Led_Init(void);
+void Led_Init(void);
 
-int Led_On(void);
+void Led_On(void);
 
-int Led_Off(void);
+void Led_Off(void);
 
 #endif
