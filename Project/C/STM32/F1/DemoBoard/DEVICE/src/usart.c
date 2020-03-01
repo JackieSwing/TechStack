@@ -2,9 +2,10 @@
 
 // serial port init
 void Usart_Init(void) {
-
     Usart_Pin_Init();
     Usart_Port_Init();
+    USART_ClearFlag(USART1, USART_FLAG_TC);
+
     return;
 }
 
@@ -36,7 +37,7 @@ void Usart_Port_Init(void) {
     USART_InitStructure.USART_StopBits = USART_StopBits_1;
     USART_InitStructure.USART_Parity = USART_Parity_No;
     USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-    USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+    USART_InitStructure.USART_Mode = USART_Mode_Tx;
 
     USART_Init(DEV_USART1_NO, &USART_InitStructure);
     USART_Cmd(DEV_USART1_NO, ENABLE);

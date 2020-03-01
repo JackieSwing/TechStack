@@ -3,6 +3,7 @@
 
 #include "stm32f10x.h"
 #include "dev_common.h"
+#include "stdio.h"
 
 #ifdef __GNUC__
     #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)

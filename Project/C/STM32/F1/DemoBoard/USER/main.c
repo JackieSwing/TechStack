@@ -4,8 +4,6 @@
 #include "led.h"
 #include "usart.h"
 
-
-
 void Delay_US(void) {
     int i = 1000;
     while(i--);
@@ -29,7 +27,7 @@ int main(void) {
     while (1) {
         Led_On();
         Delay_MS(1000);
-        printf("Hello, I am USART1");
+        printf("Hello, I am USART1\r\n");
         Led_Off();
         Delay_MS(1000);
     }
