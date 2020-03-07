@@ -1,7 +1,7 @@
-#ifndef _DEV_COMMON_H_
-#define _DEV_COMMON_H_
+#ifndef _DEV_ERROR_H_
+#define _DEV_ERROR_H_
 
-#include "stm32f10x.h"
+#include "def.h"
 
 // define error code
 typedef enum EN_DEV_ERR {
@@ -9,7 +9,7 @@ typedef enum EN_DEV_ERR {
     DEV_OK = 10000000,
     DEV_FAIL = 10000001
 
-    // specified error code of each device
+    // specified error code of each module
 
 }DEV_ERR;
 

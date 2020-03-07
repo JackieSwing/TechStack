@@ -2,17 +2,15 @@
 #define _USART_H_
 
 #include "stm32f10x.h"
-#include "dev_common.h"
-#include "stdio.h"
+#include "common.h"
+#include "error.h"
 
-#ifdef __GNUC__
-    #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-#else
-    #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
-#endif
 
-void Usart_Init(void);
-void Usart_Pin_Init(void);
-void Usart_Port_Init(void);
+void Usart_Params_Init(void);
+
+void Usart_Init(USART_Configer configer);
+void Usart_Port_Init(USART_Configer configer);
+void Usart_Ext_Init(USART_Configer configer);
+
 
 #endif

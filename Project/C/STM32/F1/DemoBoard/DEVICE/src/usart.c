@@ -1,52 +1,74 @@
 #include "usart.h"
 
 // serial port init
-void Usart_Init(void) {
-    Usart_Pin_Init();
-    Usart_Port_Init();
-    USART_ClearFlag(USART1, USART_FLAG_TC);
+void Usart_Params_Init(void) {
+    // get handles
+    USART_Configer *ptConfiger = &Usart1;
+
+    // configer of pin rx
+    ptConfiger->configRx.port = GPIOA;
+    ptConfiger->configRx.clock = RCC_APB2Periph_GPIOA;
+    ptConfiger->configRx.clockType = CLOCK_TYPE_APB2;
+
+    ptConfiger->configRx.config.GPIO_Pin = GPIO_Pin_10;
+    ptConfiger->configRx.config.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+
+    // configer of pin tx 
+    ptConfiger->configTx.port = GPIOA;
+    ptConfiger->configTx.clock = RCC_APB2Periph_GPIOA;
+    ptConfiger->configTx.clockType = CLOCK_TYPE_APB2;
+
+    ptConfiger->configTx.config.GPIO_Pin = GPIO_Pin_9;
+    ptConfiger->configTx.config.GPIO_Mode = GPIO_Mode_AF_PP;
+    ptConfiger->configTx.config.GPIO_Speed = GPIO_Speed_50MHz;
+
+    // configer of ext usart
+    ptConfiger->configUsartExt.portExt = USART1;
+    ptConfiger->configUsartExt.clockExt = RCC_APB2Periph_USART1;
+    ptConfiger->configUsartExt.clockType = CLOCK_TYPE_APB2;
+
+    ptConfiger->configUsartExt.configExt.USART_BaudRate = 9600;
+    ptConfiger->configUsartExt.configExt.USART_Parity = USART_Parity_No;
+    ptConfiger->configUsartExt.configExt.USART_StopBits = USART_StopBits_1;
+    ptConfiger->configUsartExt.configExt.USART_WordLength = USART_WordLength_8b;
+    ptConfiger->configUsartExt.configExt.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+    ptConfiger->configUsartExt.configExt.USART_Mode = USART_Mode_Tx;
 
     return;
 }
 
+// Init with USART params
+void Usart_Init(USART_Configer configer) {
+    Usart_Port_Init(configer);
+    Usart_Ext_Init(configer);
 
-void Usart_Pin_Init(void) {
-    GPIO_InitTypeDef GPIO_InitStructure;
+    USART_ClearFlag(configer.configUsartExt.portExt, USART_FLAG_TC);
+}
 
-    RCC_APB2PeriphClockCmd(DEV_USART1_CLOCK_PORT, ENABLE); // open clock
+void Usart_Port_Init(USART_Configer configer) {
+    // get handles
+    GPIO_Configer *ptConfigerTx = &(configer.configTx);
+    GPIO_Configer *ptConfigerRx = &(configer.configRx);
 
-    // USART1_TX
-    GPIO_InitStructure.GPIO_Pin = DEV_USART1_PIN_TX;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_Init(DEV_USART1_PORT, &GPIO_InitStructure);
+    // process pin tx
+    APB_Clock_Enable(ptConfigerTx->clock, ptConfigerTx->clockType);
+    GPIO_Init(ptConfigerTx->port, &(ptConfigerTx->config));
 
-    // USART1_RX
-    GPIO_InitStructure.GPIO_Pin = DEV_USART1_PIN_RX;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-    GPIO_Init(DEV_USART1_PORT, &GPIO_InitStructure);
+    // process pin rx
+    APB_Clock_Enable(ptConfigerRx->clock, ptConfigerRx->clockType);
+    GPIO_Init(ptConfigerRx->port, &(ptConfigerRx->config));
     return;
 }
 
-void Usart_Port_Init(void) {
-    USART_InitTypeDef USART_InitStructure;
-    RCC_APB2PeriphClockCmd(DEV_USART1_CLOCK_COM, ENABLE);
+void Usart_Ext_Init(USART_Configer configer) {
+    // get configer handle
+    USART_Ext_Configer *ptConfigerUsartExt = &(configer.configUsartExt);
 
-    USART_InitStructure.USART_BaudRate = DEV_UASRT_BAUD_RATE;
-    USART_InitStructure.USART_WordLength = USART_WordLength_8b;
-    USART_InitStructure.USART_StopBits = USART_StopBits_1;
-    USART_InitStructure.USART_Parity = USART_Parity_No;
-    USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-    USART_InitStructure.USART_Mode = USART_Mode_Tx;
-
-    USART_Init(DEV_USART1_NO, &USART_InitStructure);
-    USART_Cmd(DEV_USART1_NO, ENABLE);
+    // call apporate function to enable device clock
+    APB_Clock_Enable(ptConfigerUsartExt->clockExt, ptConfigerUsartExt->clockType);
+    // init usart
+    USART_Init(ptConfigerUsartExt->portExt, &(ptConfigerUsartExt->configExt));
+    USART_Cmd(ptConfigerUsartExt->portExt, ENABLE);
     return;
 }
 
-PUTCHAR_PROTOTYPE {
-  USART_SendData(USART1, (uint8_t) ch);
-  while (USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET) {
-  }
-  return ch;
-}
